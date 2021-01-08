@@ -1,1 +1,3 @@
-# plant-monitor-system
+# Plant Monitor System
+
+Author : Guilherme Daros
