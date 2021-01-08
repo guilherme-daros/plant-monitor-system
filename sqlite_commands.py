@@ -107,3 +107,23 @@ def insert_data(db_name, table_name, *args):
         return True
     except Error as error:
         print(error)
+
+
+def get_data(db_name, table_name, column_name):
+    '''Gets data from a specified column table
+
+    Args:
+        db_name (str): database where table_name is
+        table_name (str): table where column_name is
+        column_name (str): column to get data
+
+    Returns:
+        list: list with selected data
+    '''
+    try:
+        connector = connect_db(db_name)
+        cursor = connector.cursor()
+        cursor.execute(f'SELECT {column_name} from {table_name}')
+        return cursor.fetchall()
+    except Error as error:
+        print(error)

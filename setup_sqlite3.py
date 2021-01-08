@@ -1,7 +1,7 @@
 '''Make SQLite3 available to the project'''
 
 import os
-from sqlite_commands import create_table
+from sqlite_commands import create_db
 
 # Check if there is a SQLite folder
 if not os.path.isdir('./sqlite'):
@@ -9,7 +9,7 @@ if not os.path.isdir('./sqlite'):
     os.system(
         'git clone https://github.com/guilherme-daros/sqlite3-setup.git sqlite')
     os.chdir('sqlite')
-    # Check is there is a db folder inside SQLite folder
+    # Check if there is a db folder inside SQLite folder
     if not os.path.isdir('./db'):
         os.system('mkdir db')
         os.chdir('../')
@@ -19,6 +19,6 @@ else:
 # Checks is main database exists
 if not os.listdir('./sqlite/db/'):
     print('Creating Main database')
-    os.system('python setup_db.py')
+    create_db(input('Main DB name: '))
 else:
     print('Main database already exists')
