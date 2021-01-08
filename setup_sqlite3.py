@@ -1,6 +1,7 @@
 '''Make SQLite3 available to the project'''
 
 import os
+from sqlite_commands import create_table
 
 # Check if there is a SQLite folder
 if not os.path.isdir('./sqlite'):

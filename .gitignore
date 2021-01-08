@@ -5,3 +5,6 @@ __pycache__/
 
 # Database
 sqlite/
+
+# Test files
+test_*
