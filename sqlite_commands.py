@@ -124,6 +124,12 @@ def get_data(db_name, table_name, column_name):
         connector = connect_db(db_name)
         cursor = connector.cursor()
         cursor.execute(f'SELECT {column_name} from {table_name}')
-        return cursor.fetchall()
+        data = cursor.fetchall()
+        ret = []
+        i = 0
+        for d in data:
+            ret.append(d[0])
+            i += 1
+        return ret
     except Error as error:
         print(error)
