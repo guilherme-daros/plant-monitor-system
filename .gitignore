@@ -8,6 +8,7 @@ sqlite/
 
 # Test files
 test_*
+recode
 
 # Config files
 .vscode/
