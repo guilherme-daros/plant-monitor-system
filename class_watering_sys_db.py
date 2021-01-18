@@ -2,14 +2,15 @@
 
 import os
 import sqlite3
+import csv
 
 from sqlite3 import Error
-from time import localtime, sleep
-from random import randint
+from time import localtime
+import git
 
 
 class WateringSysDB:
-    '''Instantiates a SQLite3 Database'''
+    '''Instantiates a SQLite3 Database as an object'''
 
     def __init__(self, name):
         '''Initiates a instace of SQLiteDB
@@ -17,6 +18,7 @@ class WateringSysDB:
         Args:
             name (str): name of database to be created
         '''
+        try:
         if not os.path.isdir('./sqlite'):
             os.system(
                 'git clone https://github.com/guilherme-daros/sqlite3-setup.git sqlite')
@@ -93,7 +95,7 @@ class WateringSysDB:
             connector = sqlite3.connect(self.path)
             cursor = connector.cursor()
 
-            date = f'{localtime().tm_mday}/{localtime().tm_mon}/{localtime().tm_year}'
+            date = f'{localtime().tm_mday}-{localtime().tm_mon}-{localtime().tm_year}'
             time = f'{localtime().tm_hour}:{localtime().tm_min}:{localtime().tm_sec}'
 
             values = [date, time]
@@ -126,7 +128,7 @@ class WateringSysDB:
 
         Args:
             node_id (int): node_id to get data
-            day (str): DD/MM/YYYY formated day string to get data
+            day (str): DD-MM-YYYY formated day string to get data
 
         Returns:
             list: list of tuples with (date, moisture) format
@@ -135,7 +137,7 @@ class WateringSysDB:
         try:
             connector = sqlite3.connect(self.path)
             cursor = connector.cursor()
-            command = f'SELECT time, moisture FROM nodes_moisture_data WHERE  node_id={node_id} AND date="{day}";'
+            command = f'SELECT time, moisture FROM nodes_moisture_data WHERE node_id={node_id} AND date="{day}";'
             cursor.execute(command)
             query = cursor.fetchall()
             return query
@@ -143,7 +145,7 @@ class WateringSysDB:
             print(error)
 
     def execute_script(self, script_path):
-        '''Executes a .sql scrip in the database instance
+        '''Executes a .sql script in the database instance
 
         Args:
             script_path (str): path to the .sql script
@@ -159,16 +161,23 @@ class WateringSysDB:
         finally:
             connector.close()
 
+    def export_moisture_data(self, node_id, date):
+        '''Exports a .csv to exports/DD-MM-YYYY-node_id path
 
-db = WateringSysDB('database')
+        Args:
+            node_id (int): CAN Node id to get data from
+            date (str): DD-MM-YYYY formated day
+        Returns:
+            list: path to exported file
+        '''
+        path = f'exports/{date}-{node_id}.csv'
+        moisture_data = self.get_moisture_data(node_id, date)
 
-# db.execute_script('setup.sql')
-# i = 0
-# while i < 100:
-#     db.insert_data('nodes_moisture_data', node_id=randint(
-#         1, 10), moisture=randint(1, 100))
-#     sleep(1)
-#     i += 1
+        if not os.path.isdir('exports'):
+            os.system('mkdir exports')
 
-print(db.get_moisture_data('8', '14/1/2021'))
-
+        export_file = open(path, 'w', newline='')
+        writer = csv.writer(export_file, delimiter=';')
+        writer.writerow(['time', 'moisture'])
+        writer.writerows(moisture_data)
+        return path

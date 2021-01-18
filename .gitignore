@@ -3,12 +3,12 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-# Database
-sqlite/
+# Production Files
+sqlite
+exports
 
 # Test files
-test_*
-recode
+test*
 
 # Config files
 .vscode/
