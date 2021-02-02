@@ -4,8 +4,8 @@ __pycache__/
 *$py.class
 
 # Production Files
-sqlite
 exports
+venv
 
 # Test files
 test*

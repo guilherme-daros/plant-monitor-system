@@ -1,4 +1,4 @@
-'''Defines a Class to SQLite Databases'''
+'''Defines a Class to SQLite3 Databases'''
 
 import os
 import sqlite3
@@ -6,30 +6,16 @@ import csv
 
 from sqlite3 import Error
 from time import localtime
-import git
 
-
-class WateringSysDB:
-    '''Instantiates a SQLite3 Database as an object'''
+class DataBase:
+    '''Instantiates SQLite3 Database as an object'''
 
     def __init__(self, name):
-        '''Initiates a instace of SQLiteDB
-
-        Args:
-            name (str): name of database to be created
-        '''
-        try:
-        if not os.path.isdir('./sqlite'):
-            os.system(
-                'git clone https://github.com/guilherme-daros/sqlite3-setup.git sqlite')
-            os.chdir('sqlite')
-            # Check if there is a db folder inside SQLite folder
-            if not os.path.isdir('./db'):
-                os.system('mkdir db')
-                os.chdir('../')
         self.name = name
-        self.path = rf'sqlite\db\{self.name}.db'
+        self.path = f'{self.name}.db'
+        self.tables = self.get_tables()
 
+        connector = None
         try:
             connector = sqlite3.connect(self.path)
         except Error as error:
@@ -37,6 +23,9 @@ class WateringSysDB:
         finally:
             if connector:
                 connector.close()
+
+    def __repr__(self):
+        return f'<SQLite3 Database object at 0x{id(self)}> '
 
     def create_table(self, table_name, columns):
         '''Create a table on the database
@@ -174,7 +163,7 @@ class WateringSysDB:
         moisture_data = self.get_moisture_data(node_id, date)
 
         if not os.path.isdir('exports'):
-            os.system('mkdir exports')
+            os.mkdir('exports')
 
         export_file = open(path, 'w', newline='')
         writer = csv.writer(export_file, delimiter=';')
